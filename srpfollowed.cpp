@@ -96,4 +96,8 @@ int main()
 
    cartDBstorage* cartdb = new cartDBstorage(cart);
    cartdb->savetoDB();
+
+   delete cart;
+   delete printin;
+   delete cartdb;
 }
