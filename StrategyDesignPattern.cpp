@@ -45,3 +45,24 @@ public:
         cout << "Cannot talk." << endl; 
     }
 };
+// --- Robot Base Class ---
+class Robot {
+protected:
+    WalkableRobot* walkBehavior;
+    TalkableRobot* talkBehavior;
+
+public:
+    Robot(WalkableRobot* w, TalkableRobot* t) {
+        this->walkBehavior = w;
+        this->talkBehavior = t;
+    }
+       
+    void walk() { 
+        walkBehavior->walk(); 
+    }
+    void talk() { 
+        talkBehavior->talk(); 
+    }
+
+    virtual void projection() = 0; // Abstract method for subclasses
+};
