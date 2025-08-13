@@ -64,3 +64,25 @@ public:
         cout << "Destroying StarPowerUp Decorator" << endl;
     }
 };
+
+int main() {
+    // Create a basic Mario character.
+    Character* mario = new Mario();
+    cout << "Basic Character: " << mario->getAbilities() << endl;
+
+    // Decorate Mario with a HeightUp power-up.
+    mario = new HeightUp(mario);
+    cout << "After HeightUp: " << mario->getAbilities() << endl;
+
+    // Decorate Mario further with a GunPowerUp.
+    mario = new GunPowerUp(mario);
+    cout << "After GunPowerUp: " << mario->getAbilities() << endl;
+
+    // Finally, add a StarPowerUp decoration.
+    mario = new StarPowerUp(mario);
+    cout << "After StarPowerUp: " << mario->getAbilities() << endl;
+
+    delete mario;
+
+    return 0;
+}
