@@ -39,3 +39,28 @@ public:
     }
     
 };
+
+
+// Concrete Decorator: Gun Shooting Power-Up.
+class GunPowerUp : public CharacterDecorator {
+public:
+    GunPowerUp(Character* c) : CharacterDecorator(c) { }
+    
+    string getAbilities() const override {
+        return character->getAbilities() + " with Gun";
+    }
+};
+
+// Concrete Decorator: Star Power-Up (temporary ability).
+class StarPowerUp : public CharacterDecorator {
+public:
+    StarPowerUp(Character* c) : CharacterDecorator(c) { }
+    
+    string getAbilities() const override {
+        return character->getAbilities() + " with Star Power (Limited Time)";
+    }
+    
+    ~StarPowerUp() {
+        cout << "Destroying StarPowerUp Decorator" << endl;
+    }
+};
