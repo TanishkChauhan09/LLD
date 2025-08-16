@@ -145,3 +145,75 @@ public:
         cout << "Logging New Notification : \n" << notificationObservable->getNotificationContent();
     }
 };
+
+//   Strategy Pattern Components 
+
+// Abstract class for different Notification Strategies.
+class INotificationStrategy {
+public:    
+    virtual void sendNotification(string content) = 0;
+};
+
+class EmailStrategy : public INotificationStrategy {
+private:
+    string emailId;
+public:
+
+    EmailStrategy(string emailId) {
+        this->emailId = emailId;
+    }
+
+    void sendNotification(string content) override {
+        // Simulate the process of sending an email notification, 
+        // representing the dispatch of messages to users via email.​
+        cout << "Sending email Notification to: " << emailId << "\n" << content;
+    }
+};
+
+class SMSStrategy : public INotificationStrategy {
+private:
+    string mobileNumber;
+public:
+
+    SMSStrategy(string mobileNumber) {
+        this->mobileNumber = mobileNumber;
+    }
+
+    void sendNotification(string content) override {
+        // Simulate the process of sending an SMS notification, 
+        // representing the dispatch of messages to users via SMS.​
+        cout << "Sending SMS Notification to: " << mobileNumber << "\n" << content;
+    }
+};
+
+class PopUpStrategy : public INotificationStrategy {
+public:
+    void sendNotification(string content) override {
+        // Simulate the process of sending popup notification.
+        cout << "Sending Popup Notification: \n" << content;
+    }
+};
+
+class NotificationEngine : public IObserver {
+private:
+    NotificationObservable* notificationObservable;
+    vector<INotificationStrategy*> notificationStrategies;
+
+public:
+    NotificationEngine(NotificationObservable* observable) {
+        this->notificationObservable = observable;
+    }
+
+    void addNotificationStrategy(INotificationStrategy* ns) {
+        this->notificationStrategies.push_back(ns);
+    }
+
+    // Can have RemoveNotificationStrategy as well.
+
+    void update() {
+        string notificationContent = notificationObservable->getNotificationContent();
+        for(const auto notificationStrategy : notificationStrategies) {
+            notificationStrategy->sendNotification(notificationContent);
+        }
+    }
+};
