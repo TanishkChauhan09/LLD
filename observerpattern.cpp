@@ -85,7 +85,7 @@ public:
 
 int main() {
     // Create a channel and subscribers
-    Channel* channel = new Channel("Exposed");
+    Channel* channel = new Channel("Elevator Academy");
 
     Subscriber* subs1 = new Subscriber("Tanishk", channel);
     Subscriber* subs2 = new Subscriber("Chauhan", channel);
