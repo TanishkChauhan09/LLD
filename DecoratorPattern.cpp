@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
+using namespace std; // for simplicity we use the entire std namespace ehich is used for string and cout also, etc.
 
 // Component Interface: defines a common interface for Mario and all power-up decorators.
 class Character {
@@ -12,6 +12,7 @@ public:
 
 // Concrete Component: Basic Mario character with no power-ups.
 class Mario : public Character {
+    
 public:
     string getAbilities() const override {
         return "Mario";
@@ -32,7 +33,12 @@ public:
 // Concrete Decorator: Height-Increasing Power-Up.
 class HeightUp : public CharacterDecorator {
 public:
-    HeightUp(Character* c) : CharacterDecorator(c) { }
+    // HeightUp(Character* c){
+    //     this->character = c;
+    // }
+
+    // or
+    HeightUp(Character* c) : CharacterDecorator(c){}
     
     string getAbilities() const override {
         return character->getAbilities() + " with HeightUp";
@@ -44,7 +50,7 @@ public:
 // Concrete Decorator: Gun Shooting Power-Up.
 class GunPowerUp : public CharacterDecorator {
 public:
-    GunPowerUp(Character* c) : CharacterDecorator(c) { }
+    GunPowerUp(Character* c) : CharacterDecorator(c)  { }  // Delegating constructor syntax in c++11 and above 
     
     string getAbilities() const override {
         return character->getAbilities() + " with Gun";
