@@ -261,6 +261,8 @@ public:
 
 NotificationService* NotificationService::instance = nullptr;
 
+// the main function to demonstrate the functionality.
+
 int main() {
     // Create NotificationService.
     NotificationService* notificationService = NotificationService::getInstance();
