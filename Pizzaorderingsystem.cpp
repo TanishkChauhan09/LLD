@@ -98,25 +98,27 @@ class Onion_Tomato:public IToppingDecrator{
 int main()
 {
 
-    IBasePizaa* MargheritaPizza = new Margherita();
+    // IBasePizaa* MargheritaPizza = new Margherita();
+    // we cal also write rather than giveg all the properties seperately
+    IBasePizaa* MargheritaPizza = new Mushroom(new ExtraCheese(new Margherita()));
 
     cout<<"Your "<< MargheritaPizza->getdescription()<<endl;
     cout<<"Cost of Pizza is:"<< MargheritaPizza->getcost()<<endl;
 
-    MargheritaPizza = new ExtraCheese(MargheritaPizza);
-    cout<<"Your "<< MargheritaPizza->getdescription()<<endl;
-    cout<<"Cost of Pizza is:" << MargheritaPizza->getcost()<<endl;
+    // MargheritaPizza = new ExtraCheese(MargheritaPizza);
+    // cout<<"Your "<< MargheritaPizza->getdescription()<<endl;
+    // cout<<"Cost of Pizza is:" << MargheritaPizza->getcost()<<endl;
 
-    MargheritaPizza = new Onion_Tomato(MargheritaPizza);
-    cout<<"Your "<<MargheritaPizza->getdescription()<<endl;
-    cout<< "Cost of Pizza is :"<<MargheritaPizza->getcost()<<endl;
+    // MargheritaPizza = new Onion_Tomato(MargheritaPizza);
+    // cout<<"Your "<<MargheritaPizza->getdescription()<<endl;
+    // cout<< "Cost of Pizza is :"<<MargheritaPizza->getcost()<<endl;
 
 
-    IBasePizaa* VegdelightPizza = new Vegdelight();
-    cout<<"Your "<< VegdelightPizza->getdescription()<<endl;
-    cout<<"Cost of Pizza is:"<<VegdelightPizza->getcost()<<endl;
+    // IBasePizaa* VegdelightPizza = new Vegdelight();
+    // cout<<"Your "<< VegdelightPizza->getdescription()<<endl;
+    // cout<<"Cost of Pizza is:"<<VegdelightPizza->getcost()<<endl;
 
-    VegdelightPizza = new Mushroom(VegdelightPizza);
-    cout<<"Your "<<VegdelightPizza->getdescription()<<endl;
-    cout<<"Cost of Pizza is:"<<VegdelightPizza->getcost()<<endl;
+    // VegdelightPizza = new Mushroom(VegdelightPizza);
+    // cout<<"Your "<<VegdelightPizza->getdescription()<<endl;
+    // cout<<"Cost of Pizza is:"<<VegdelightPizza->getcost()<<endl;
 }
