@@ -23,7 +23,7 @@ class XMLdataprovider{
    }  
 };
 
-class XMLdataproviderAdapter{
+class XMLdataproviderAdapter:public IReports{
     private:
      XMLdataprovider *adaptee;
 
@@ -56,13 +56,31 @@ class Client {
 public:
     void getReport(IReports* report, string rawData) {
         cout << "Processed JSON: "
-        << report->getJsonData(rawData)
+        << report->getjson(rawData)
         << endl;
     }
 };
 
 int main()
 {
+     // 1. Create the adaptee
+    XMLdataprovider* xmlProv = new XMLdataprovider();
+
+    // 2. Make our adapter
+    IReports* adapter = new XMLdataproviderAdapter(xmlProv);
+
+    // 3. Give it some raw data
+    string rawData = "Rohan:65";
+
+    // 4. Client prints the JSON
+    Client* client = new Client();
+    client->getReport(adapter, rawData);
+    // → Processed JSON: {"name":"Alice", "id":42}
+
+    // 5. Cleanup
+    delete adapter;
+    delete xmlProv;
+    return 0;
 
 }
 
