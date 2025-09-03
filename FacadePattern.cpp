@@ -53,3 +53,33 @@ class BIOS{
     } 
 };
 
+class ComputerFacade{
+    private:
+    PowerSupply Powersupply;
+    CoolingSystem CoolingSystem;
+    CPU cpu;
+    Memory memory;
+    HardDrive harddrive;
+    BIOS bios;
+    operatingSystem os;
+
+    public:
+    void startcomputer(){
+
+        cout<<"Starting Computer...."<<endl;
+        Powersupply.providepower();
+        CoolingSystem.startfans();
+        bios.boot(cpu,memory);
+        harddrive.spinup();
+        os.load();
+        cout<<"Computer Started Successfully...."<<endl;
+    }
+};
+
+int main()
+{
+    ComputerFacade computer;
+    computer.startcomputer();
+
+    return 0;
+}
