@@ -3,6 +3,8 @@
 #include <string>
 #include <stdexcept>
 
+// STANDARD EXAMPLE: FILE SYSTEM
+
 using namespace std;
 
 // Base interface for files and folders
