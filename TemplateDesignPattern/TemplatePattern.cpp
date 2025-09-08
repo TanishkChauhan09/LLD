@@ -35,3 +35,18 @@ public:
         cout << "[Common] Saving model to disk as default format\n";
     }
 };
+
+
+class NeuralNetworkTrainer : public ModelTrainer {
+protected:
+    void trainModel() override {
+        cout << "[NeuralNet] Training Neural Network for 100 epochs\n";
+        // pseudo-code: forward/backward passes, gradient descent...
+    }
+    void evaluateModel() override {
+        cout << "[NeuralNet] Evaluating accuracy and loss on validation set\n";
+    }
+    void saveModel() override {
+        cout << "[NeuralNet] Serializing network weights to .h5 file\n";
+    }
+};
