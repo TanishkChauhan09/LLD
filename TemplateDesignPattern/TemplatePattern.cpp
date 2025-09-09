@@ -50,3 +50,49 @@ protected:
         cout << "[NeuralNet] Serializing network weights to .h5 file\n";
     }
 };
+
+class DecisionTreeTrainer : public ModelTrainer {
+protected:
+    // Use the default preprocessData() (train/test split + normalize)
+
+    void trainModel() override {
+        cout << "[DecisionTree] Building decision tree with max_depth=5\n";
+        // pseudo-code: recursive splitting on features...
+    }
+    void evaluateModel() override {
+        cout << "[DecisionTree] Computing classification report (precision/recall)\n";
+    }
+    // use the default saveModel()
+};
+
+// ───────────────────────────────────────────────────────────
+// 4. Usage
+// ───────────────────────────────────────────────────────────
+
+class client{
+    string datapath;
+    ModelTrainer *m;
+    public:
+    client(ModelTrainer *mt,string str)
+    {
+        m = mt;
+        datapath = str;
+    }
+
+    void m1()
+    {
+        m->trainPipeline(datapath);
+    }
+};
+
+// datapaths: "data/images/", "data/iris.csv"
+
+int main() {
+    cout << "=== Neural Network Training ===\n";
+    
+    string datapath1 = "data/images/";
+    client *cl = new client(new DecisionTreeTrainer(),datapath1);
+    cl->m1();
+
+    return 0;
+}
