@@ -23,3 +23,28 @@ public:
     }
 };
     
+class Imgageproxy : public IImage{
+    RealImage* realimage;
+    string filename;
+    public:
+    Imgageproxy(string file)
+    {
+        filename = file;
+        realimage = nullptr;
+    }
+
+    void display() override{
+        if(realimage == nullptr)
+        {
+            realimage = new RealImage(filename);
+        }
+        realimage->display();
+    }
+};
+
+int main()
+{
+    IImage *image1 = new Imgageproxy("/photos/images/.jpej");
+    image1->display();
+    
+}
