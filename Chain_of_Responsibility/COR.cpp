@@ -50,3 +50,25 @@ public:
         }
     }
 };
+
+
+// Concrete Handler for 500 Rs Notes
+class FiveHundredHandler : public MoneyHandler {
+private:
+    int numNotes;
+
+public:
+    FiveHundredHandler(int numNotes) {
+        this->numNotes = numNotes;    
+    }
+
+    void dispense(int amount) override {
+        int notesNeeded = amount / 500;
+
+        if(notesNeeded > numNotes) {
+            notesNeeded = numNotes;
+            numNotes = 0;
+        }
+        else {
+            numNotes -= notesNeeded;
+        }
