@@ -118,3 +118,105 @@ public:
         }
     }
 };
+
+// Concrete Handler for 500 Rs Notes
+class FiveHundredHandler : public MoneyHandler {
+private:
+    int numNotes;
+
+public:
+    FiveHundredHandler(int numNotes) {
+        this->numNotes = numNotes;    
+    }
+
+    void dispense(int amount) override {
+        int notesNeeded = amount / 500;
+
+        if(notesNeeded > numNotes) {
+            notesNeeded = numNotes;
+            numNotes = 0;
+        }
+        else {
+            numNotes -= notesNeeded;
+        }
+
+        if(notesNeeded > 0)
+            cout << "Dispensing " << notesNeeded << " x ₹500 notes.\n";
+
+        int remainingAmount = amount - (notesNeeded * 500);
+        if(remainingAmount > 0) {
+            if(nextHandler != nullptr) nextHandler->dispense(remainingAmount);
+            else {
+                cout << "Remaining amount of " << remainingAmount << " cannot be fulfilled (Insufficinet fund in ATM)\n";
+            }
+        }
+    }
+};
+
+// Concrete Handler for 200 Rs Notes
+class TwoHundredHandler : public MoneyHandler {
+private:
+    int numNotes;
+
+public:
+    TwoHundredHandler(int numNotes) {
+        this->numNotes = numNotes;
+    }
+
+    void dispense(int amount) override {
+        int notesNeeded = amount / 200;
+
+        if(notesNeeded > numNotes) {
+            notesNeeded = numNotes;
+            numNotes = 0;
+        }
+        else {
+            numNotes -= notesNeeded;
+        }
+
+        if(notesNeeded > 0)
+            cout << "Dispensing " << notesNeeded << " x ₹200 notes.\n";
+
+        int remainingAmount = amount - (notesNeeded * 200);
+        if(remainingAmount > 0) {
+            if(nextHandler != nullptr) nextHandler->dispense(remainingAmount);
+            else {
+                cout << "Remaining amount of " << remainingAmount << " cannot be fulfilled (Insufficinet fund in ATM)\n";
+            }
+        }
+    }
+};
+
+// Concrete Handler for 100 Rs Notes
+class HundredHandler : public MoneyHandler {
+private:
+    int numNotes;
+
+public:
+    HundredHandler(int numNotes) {
+        this->numNotes = numNotes;
+    }
+
+    void dispense(int amount) override {
+        int notesNeeded = amount / 100;
+
+        if(notesNeeded > numNotes) {
+            notesNeeded = numNotes;
+            numNotes = 0;
+        }
+        else {
+            numNotes -= notesNeeded;
+        }
+
+        if(notesNeeded > 0)
+            cout << "Dispensing " << notesNeeded << " x ₹100 notes.\n";
+
+        int remainingAmount = amount - (notesNeeded * 100);
+        if(remainingAmount > 0) {
+            if(nextHandler != nullptr) nextHandler->dispense(remainingAmount);
+            else {
+                cout << "Remaining amount of " << remainingAmount << " cannot be fulfilled (Insufficinet fund in ATM)\n";
+            }
+        }
+    }
+};
