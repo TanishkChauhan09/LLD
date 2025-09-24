@@ -52,3 +52,37 @@ public:
         return r < 90;
     }
 };
+
+class PaymentGateway {
+protected:
+    BankingSystem* bankingSystem;
+public:
+    PaymentGateway() { 
+        bankingSystem = nullptr;
+    }
+    virtual ~PaymentGateway() { 
+        delete bankingSystem; 
+    }
+
+    // Template method defining the standard payment flow
+    virtual bool processPayment(PaymentRequest* request) {
+        if (!validatePayment(request)) {
+            cout << "[PaymentGateway] Validation failed for " << request->sender << ".\n";
+            return false;
+        }
+        if (!initiatePayment(request)) {
+            cout << "[PaymentGateway] Initiation failed for " << request->sender << ".\n";
+            return false;
+        }
+        if (!confirmPayment(request)) {
+            cout << "[PaymentGateway] Confirmation failed for " << request->sender << ".\n";
+            return false;
+        }
+        return true;
+    }
+
+    // Steps to be implemented by concrete gateways
+    virtual bool validatePayment(PaymentRequest* request) = 0;
+    virtual bool initiatePayment(PaymentRequest* request) = 0;
+    virtual bool confirmPayment(PaymentRequest* request) = 0;
+};
