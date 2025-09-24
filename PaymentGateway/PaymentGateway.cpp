@@ -86,3 +86,19 @@ public:
     virtual bool initiatePayment(PaymentRequest* request) = 0;
     virtual bool confirmPayment(PaymentRequest* request) = 0;
 };
+
+
+class PaytmGateway : public PaymentGateway {
+public:
+    PaytmGateway() {
+        bankingSystem = new PaytmBankingSystem();
+    }
+    bool validatePayment(PaymentRequest* request) override {
+        cout << "[Paytm] Validating payment for " << request->sender << ".\n";
+
+        if (request->amount <= 0 || request->currency != "INR") {
+            return false;
+        }
+        return true;
+    }
+};
