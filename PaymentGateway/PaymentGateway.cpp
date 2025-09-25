@@ -101,4 +101,34 @@ public:
         }
         return true;
     }
+    bool initiatePayment(PaymentRequest* request) override {
+        cout << "[Paytm] Initiating payment of " << request->amount 
+                  << " " << request->currency << " for " << request->sender << ".\n";
+
+        return bankingSystem->processPayment(request->amount);
+    }
+    bool confirmPayment(PaymentRequest* request) override {
+        cout << "[Paytm] Confirming payment for " << request->sender << ".\n";
+
+        // Confirmation always succeeds in this simulation
+        return true;
+    }
+};
+
+// ----------------------------
+// Concrete Payment Gateway for Razorpay
+// ----------------------------
+class RazorpayGateway : public PaymentGateway {
+public:
+    RazorpayGateway() {
+        bankingSystem = new RazorpayBankingSystem();
+    }
+    bool validatePayment(PaymentRequest* request) override {
+        cout << "[Razorpay] Validating payment for " << request->sender << ".\n";
+
+        if (request->amount <= 0) {
+            return false;
+        }
+        return true;
+    }
 };
