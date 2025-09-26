@@ -131,4 +131,17 @@ public:
         }
         return true;
     }
+   bool initiatePayment(PaymentRequest* request) override {
+        cout << "[Razorpay] Initiating payment of " << request->amount 
+                  << " " << request->currency << " for " << request->sender << ".\n";
+
+        return bankingSystem->processPayment(request->amount);
+       
+    }
+    bool confirmPayment(PaymentRequest* request) override {
+        cout << "[Razorpay] Confirming payment for " << request->sender << ".\n";
+
+        // Confirmation always succeeds in this simulation
+        return true;
+    }
 };
