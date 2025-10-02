@@ -183,3 +183,31 @@ public:
         return realGateway->confirmPayment(request);
     }
 };
+
+enum class GatewayType { 
+    PAYTM, 
+    RAZORPAY
+};
+
+class GatewayFactory {
+private:
+    static GatewayFactory instance;
+    // Private constructor and delete copy/assignment to ensure no one can clone or reassign your singleton.
+    GatewayFactory() {}
+    GatewayFactory(const GatewayFactory&) = delete;
+    GatewayFactory& operator=(const GatewayFactory&) = delete;
+    
+public:
+    static GatewayFactory& getInstance() {
+        return instance;
+    }
+    PaymentGateway* getGateway(GatewayType type) {
+        if (type == GatewayType::PAYTM) {
+            PaymentGateway* paymentGateway = new PaytmGateway();
+            return new PaymentGatewayProxy(paymentGateway, 3);
+        } else {
+            PaymentGateway* paymentGateway = new RazorpayGateway();
+            return new PaymentGatewayProxy(paymentGateway, 1);
+        }
+    }
+};
