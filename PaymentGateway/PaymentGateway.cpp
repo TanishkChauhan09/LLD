@@ -211,3 +211,45 @@ public:
         }
     }
 };
+
+
+
+GatewayFactory GatewayFactory::instance;
+
+// ----------------------------
+// Unified API service (Singleton)
+// ----------------------------
+class PaymentService {
+private:
+    static PaymentService instance;
+    PaymentGateway* gateway;
+
+    PaymentService() { 
+        gateway = nullptr; 
+    }
+    ~PaymentService() { 
+        delete gateway; 
+    }
+
+    // Private constructor and delete copy/assignment to ensure no one can clone or reassign your singleton.
+    PaymentService(const PaymentService&) = delete;
+    PaymentService& operator=(const PaymentService&) = delete;
+
+public:
+    static PaymentService& getInstance() {
+        return instance;
+    }
+    void setGateway(PaymentGateway* g) {
+        if (gateway) delete gateway;
+        gateway = g;
+    }
+    bool processPayment(PaymentRequest* request) {
+        if (!gateway) {
+            cout << "[PaymentService] No payment gateway selected.\n";
+            return false;
+        }
+        return gateway->processPayment(request);
+    }
+};
+
+PaymentService PaymentService::instance;
