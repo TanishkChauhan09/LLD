@@ -253,3 +253,48 @@ public:
 };
 
 PaymentService PaymentService::instance;
+
+class PaymentController {
+private:
+    static PaymentController instance;
+    PaymentController() {}
+    PaymentController(const PaymentController&) = delete;
+    PaymentController& operator=(const PaymentController&) = delete;
+public:
+    static PaymentController& getInstance() {
+        return instance;
+    }
+    bool handlePayment(GatewayType type, PaymentRequest* req) {
+        PaymentGateway* paymentGateway = GatewayFactory::getInstance().getGateway(type);
+        PaymentService::getInstance().setGateway(paymentGateway);
+        return PaymentService::getInstance().processPayment(req);
+    }
+};
+
+PaymentController PaymentController::instance;
+
+// ----------------------------
+// Main: Client code now goes through controller
+// ----------------------------
+int main() {
+
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    PaymentRequest* req1 = new PaymentRequest("Aditya", "Shubham", 1000.0, "INR");
+
+    cout << "Processing via Paytm\n";
+    cout << "------------------------------\n";
+    bool res1 = PaymentController::getInstance().handlePayment(GatewayType::PAYTM, req1);
+    cout << "Result: " << (res1 ? "SUCCESS" : "FAIL") << "\n";
+    cout << "------------------------------\n\n";
+
+    PaymentRequest* req2 = new PaymentRequest("Shubham", "Aditya", 500.0, "USD");
+
+    cout << "Processing via Razorpay\n";
+    cout << "------------------------------\n";
+    bool res2 = PaymentController::getInstance().handlePayment(GatewayType::RAZORPAY, req2);
+    cout << "Result: " << (res2 ? "SUCCESS" : "FAIL") << "\n";
+    cout << "------------------------------\n";
+
+    return 0;
+}
