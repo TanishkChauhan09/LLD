@@ -288,13 +288,6 @@ int main() {
     cout << "Result: " << (res1 ? "SUCCESS" : "FAIL") << "\n";
     cout << "------------------------------\n\n";
 
-    PaymentRequest* req2 = new PaymentRequest("Shubham", "Aditya", 500.0, "USD");
-
-    cout << "Processing via Razorpay\n";
-    cout << "------------------------------\n";
-    bool res2 = PaymentController::getInstance().handlePayment(GatewayType::RAZORPAY, req2);
-    cout << "Result: " << (res2 ? "SUCCESS" : "FAIL") << "\n";
-    cout << "------------------------------\n";
 
     return 0;
 }
