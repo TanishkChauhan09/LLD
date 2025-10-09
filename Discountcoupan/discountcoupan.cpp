@@ -79,5 +79,16 @@ public:
         }
         return instance;
     }
-    
+    DiscountStrategy* getStrategy(StrategyType type, double param1, double param2 = 0.0) const {
+        if (type == StrategyType::FLAT) {
+            return new FlatDiscountStrategy(param1);
+        }
+        if (type == StrategyType::PERCENT) {
+            return new PercentageDiscountStrategy(param1);
+        }
+        if (type == StrategyType::PERCENT_WITH_CAP) {
+            return new PercentageWithCapStrategy(param1, param2);
+        }
+        return nullptr;
+    }
 };
