@@ -55,3 +55,29 @@ public:
         return disc;
     }
 };
+
+
+enum StrategyType {
+    FLAT,
+    PERCENT,
+    PERCENT_WITH_CAP
+};
+
+// ----------------------------
+// DiscountStrategyManager (Singleton)
+// ----------------------------
+class DiscountStrategyManager {
+private:
+    static DiscountStrategyManager* instance;
+    DiscountStrategyManager() {}
+    DiscountStrategyManager(const DiscountStrategyManager&) = delete;
+    DiscountStrategyManager& operator=(const DiscountStrategyManager&) = delete;
+public:
+    static DiscountStrategyManager* getInstance() {
+        if (!instance) {
+            instance = new DiscountStrategyManager();
+        }
+        return instance;
+    }
+    
+};
