@@ -92,3 +92,58 @@ public:
         return nullptr;
     }
 };
+
+class Product {
+private:
+    string name;
+    string category;
+    double price;
+public:
+    Product(string name, string category, double price) {
+        this->name = name;
+        this->category = category;
+        this->price = price;
+    }
+    string getName() {
+        return name;
+    }
+    string getCategory() const {
+        return category;
+    }
+    double getPrice() {
+        return price;
+    }
+};
+
+class CartItem {
+private:
+    Product* product;
+    int quantity;
+public:
+    CartItem(Product* prod, int qty) {
+        product = prod;
+        quantity = qty;
+    }
+    double itemTotal() {
+        return product->getPrice() * quantity;
+    }
+    const Product* getProduct() {
+        return product;
+    }
+};
+
+class Cart {
+private:
+    vector<CartItem*> items;
+    double originalTotal;
+    double currentTotal;
+    bool loyaltyMember;
+    string paymentBank;
+public:
+    Cart() {
+        originalTotal = 0.0;
+        currentTotal = 0.0;
+        loyaltyMember = false;
+        paymentBank = "";
+    }
+};
