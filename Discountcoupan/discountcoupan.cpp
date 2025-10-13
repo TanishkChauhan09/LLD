@@ -188,3 +188,43 @@ public:
         return items;
     }
 };
+
+class Coupon {
+private:
+    Coupon* next;
+public:
+    Coupon() {
+        next = nullptr;
+    }
+    virtual ~Coupon() {
+        if (next) {
+            delete next;
+        }
+    }
+    void setNext(Coupon* nxt) {
+        next = nxt;
+    }
+    Coupon* getNext() {
+        return next;
+    }
+    
+    void applyDiscount(Cart* cart) {
+        if (isApplicable(cart)) {
+            double discount = getDiscount(cart);
+            cart->applyDiscount(discount);
+            cout << name() << " applied: " << discount << endl;
+            if (!isCombinable()) {
+                return;
+            }
+        }
+        if (next) {
+            next->applyDiscount(cart);
+        }
+    }
+    virtual bool isApplicable(Cart* cart) = 0;
+    virtual double getDiscount(Cart* cart) = 0;
+    virtual bool isCombinable() {
+        return true;
+    }
+    virtual string name() = 0;
+};
