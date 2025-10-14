@@ -228,3 +228,43 @@ public:
     }
     virtual string name() = 0;
 };
+
+
+class SeasonalOffer : public Coupon {
+private:
+    double percent;
+    string category;
+    DiscountStrategy* strat;
+public:
+    SeasonalOffer(double pct, string cat) {
+        percent = pct;
+        category = cat;
+        strat = DiscountStrategyManager::getInstance()->getStrategy(StrategyType::PERCENT, percent);
+    }
+    ~SeasonalOffer() {
+        delete strat;
+    }
+    bool isApplicable(Cart* cart) override {
+        for (CartItem* item : cart->getItems()) {
+            if (item->getProduct()->getCategory() == category) {
+                return true;
+            }
+        }
+        return false;
+    }
+    double getDiscount(Cart* cart) override {
+        double subtotal = 0.0;
+        for (CartItem* item : cart->getItems()) {
+            if (item->getProduct()->getCategory() == category) {
+                subtotal += item->itemTotal();
+            }
+        }
+        return strat->calculate(subtotal);
+    }
+    bool isCombinable() override {
+        return true;
+    }
+    string name() override {
+        return "Seasonal Offer " + to_string((int)percent) + " % off " + category;
+    }
+};
