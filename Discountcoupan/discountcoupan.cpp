@@ -268,3 +268,27 @@ public:
         return "Seasonal Offer " + to_string((int)percent) + " % off " + category;
     }
 };
+
+
+class LoyaltyDiscount : public Coupon {
+private:
+    double percent;
+    DiscountStrategy* strat;
+public:
+    LoyaltyDiscount(double pct) {
+        percent = pct;
+        strat = DiscountStrategyManager::getInstance()->getStrategy(StrategyType::PERCENT, percent);
+    }
+    ~LoyaltyDiscount() {
+        delete strat;
+    }
+    bool isApplicable(Cart* cart) override {
+        return cart->isLoyaltyMember();
+    }
+    double getDiscount(Cart* cart) override {
+        return strat->calculate(cart->getCurrentTotal());
+    }
+    string name() override {
+        return "Loyalty Discount " + to_string((int)percent) + "% off";
+    }
+};
