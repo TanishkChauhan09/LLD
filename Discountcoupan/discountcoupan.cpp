@@ -292,3 +292,31 @@ public:
         return "Loyalty Discount " + to_string((int)percent) + "% off";
     }
 };
+
+class Solution {
+public:
+    Node* removekeys(Node* root, int l, int r) {
+        if (!root) return nullptr;
+
+        // Recursively fix left and right subtrees
+        root->left = removekeys(root->left, l, r);
+        root->right = removekeys(root->right, l, r);
+
+        // If root is smaller than l → valid part is on the right
+        if (root->data < l) {
+            Node* rightChild = root->right;
+            delete root;
+            return rightChild;
+        }
+
+        // If root is greater than r → valid part is on the left
+        if (root->data > r) {
+            Node* leftChild = root->left;
+            delete root;
+            return leftChild;
+        }
+
+        // Root is within range → keep it
+        return root;
+    }
+};
