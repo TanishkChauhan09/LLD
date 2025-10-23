@@ -1,6 +1,10 @@
-
+#include <vector>
+#include <string>
+#include <mutex>
+#include <algorithm>
 #include <iostream>
-
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -24,7 +28,6 @@ public:
         return min(amount, baseAmount);
     }
 };
-
 
 class PercentageDiscountStrategy : public DiscountStrategy {
 private:
@@ -55,7 +58,6 @@ public:
         return disc;
     }
 };
-
 
 enum StrategyType {
     FLAT,
@@ -92,7 +94,12 @@ public:
         return nullptr;
     }
 };
+// Initialize static member
+DiscountStrategyManager* DiscountStrategyManager::instance = nullptr;
 
+// ----------------------------
+// Assume existing Cart and Product classes
+// ----------------------------
 class Product {
 private:
     string name;
@@ -146,6 +153,7 @@ public:
         loyaltyMember = false;
         paymentBank = "";
     }
+
     void addProduct(Product* prod, int qty = 1) {
         CartItem* item = new CartItem(prod, qty);
         items.push_back(item);
@@ -189,6 +197,9 @@ public:
     }
 };
 
+// ----------------------------
+// Coupon base class (Chain of Responsibility)
+// ----------------------------
 class Coupon {
 private:
     Coupon* next;
@@ -229,7 +240,9 @@ public:
     virtual string name() = 0;
 };
 
-
+// ----------------------------
+// Concrete Coupons
+// ----------------------------
 class SeasonalOffer : public Coupon {
 private:
     double percent;
@@ -269,7 +282,6 @@ public:
     }
 };
 
-
 class LoyaltyDiscount : public Coupon {
 private:
     double percent;
@@ -293,30 +305,119 @@ public:
     }
 };
 
-class Solution {
+class BulkPurchaseDiscount : public Coupon {
+private:
+    double threshold;
+    double flatOff;
+    DiscountStrategy* strat;
 public:
-    Node* removekeys(Node* root, int l, int r) {
-        if (!root) return nullptr;
-
-        // Recursively fix left and right subtrees
-        root->left = removekeys(root->left, l, r);
-        root->right = removekeys(root->right, l, r);
-
-        // If root is smaller than l → valid part is on the right
-        if (root->data < l) {
-            Node* rightChild = root->right;
-            delete root;
-            return rightChild;
-        }
-
-        // If root is greater than r → valid part is on the left
-        if (root->data > r) {
-            Node* leftChild = root->left;
-            delete root;
-            return leftChild;
-        }
-
-        // Root is within range → keep it
-        return root;
+    BulkPurchaseDiscount(double thr, double off) {
+        threshold = thr;
+        flatOff = off;
+        strat = DiscountStrategyManager::getInstance()->getStrategy(StrategyType::FLAT, flatOff);
+    }
+    ~BulkPurchaseDiscount() {
+        delete strat;
+    }
+    bool isApplicable(Cart* cart) override {
+        return cart->getOriginalTotal() >= threshold;
+    }
+    double getDiscount(Cart* cart) override {
+        return strat->calculate(cart->getCurrentTotal());
+    }
+    string name() override {
+        return "Bulk Purchase Rs " + to_string((int)flatOff) + " off over "
+             + to_string((int)threshold);
     }
 };
+
+class BankingCoupon : public Coupon {
+private:
+    string bank;
+    double minSpend;
+    double percent;
+    double offCap;
+    DiscountStrategy* strat;
+public:
+    BankingCoupon(const string& b, double ms, double percent, double offCap) {
+        bank = b;
+        minSpend = ms;
+        this->percent = percent;
+        this->offCap = percent;
+        strat = DiscountStrategyManager::getInstance()->getStrategy(StrategyType::PERCENT_WITH_CAP, percent, offCap);
+    }
+    ~BankingCoupon() {
+        delete strat;
+    }
+    bool isApplicable(Cart* cart) override {
+        return cart->getPaymentBank() == bank
+            && cart->getOriginalTotal() >= minSpend;
+    }
+    double getDiscount(Cart* cart) override {
+        return strat->calculate(cart->getCurrentTotal());
+    }
+    string name() override {
+        return bank + " Bank Rs " + to_string((int)percent) + " off upto " + to_string((int) offCap);
+    }
+};
+
+// ----------------------------
+// CouponManager (Singleton)
+// ----------------------------
+class CouponManager {
+private:
+    static CouponManager* instance;
+    Coupon* head;
+    mutable mutex mtx;
+    CouponManager() {
+        head = nullptr;
+    }
+public:
+    static CouponManager* getInstance() {
+        if (!instance) {
+            instance = new CouponManager();
+        }
+        return instance;
+    }
+
+    void registerCoupon(Coupon* coupon) {
+        lock_guard<mutex> lock(mtx);
+        if (!head) {
+            head = coupon;
+        } else {
+            Coupon* cur = head;
+            while (cur->getNext()) {
+                cur = cur->getNext();
+            }
+            cur->setNext(coupon);
+        }
+    }
+
+    vector<string> getApplicable(Cart* cart) const {
+        lock_guard<mutex> lock(mtx);
+        vector<string> res;
+        Coupon* cur = head;
+        while (cur) {
+            if (cur->isApplicable(cart)) {
+                res.push_back(cur->name());
+            }
+            cur = cur->getNext();
+        }
+        return res;
+    }
+
+    double applyAll(Cart* cart) {
+        lock_guard<mutex> lock(mtx);
+        if (head) {
+            head->applyDiscount(cart);
+        }
+        return cart->getCurrentTotal();
+    }
+};
+// Initialize static instance pointer
+CouponManager* CouponManager::instance = nullptr;
+
+// ----------------------------
+// Main: Client code (heap allocations and pointers)
+// ----------------------------
+
