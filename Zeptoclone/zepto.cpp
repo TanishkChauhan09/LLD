@@ -145,3 +145,66 @@ public:
         return available;
     }
 };
+
+/////////////////////////////////////////////
+// InventoryManager 
+/////////////////////////////////////////////
+
+class InventoryManager {
+    InventoryStore* store;
+
+public:
+    InventoryManager(InventoryStore* store) {
+        this->store = store;
+    }
+
+    void addStock(int sku, int qty) {
+        Product* prod = ProductFactory::createProduct(sku);
+        store->addProduct(prod, qty);
+        cout << "[InventoryManager] Added SKU " << sku << " Qty " << qty << endl;
+    }
+
+    void removeStock(int sku, int qty) {
+        store->removeProduct(sku, qty); 
+    }
+
+    int checkStock(int sku) {
+        return store->checkStock(sku);
+    }
+
+    vector<Product*> getAvailableProducts() {
+        return store->listAvailableProducts();
+    }
+};
+
+/////////////////////////////////////////////
+// Replenishment Strategy (Strategy Pattern)
+/////////////////////////////////////////////
+
+class ReplenishStrategy {
+public:
+    virtual void replenish(InventoryManager* manager, map<int,int> itemsToReplenish) = 0;
+    virtual ~ReplenishStrategy() {}
+};
+
+class ThresholdReplenishStrategy : public ReplenishStrategy {
+private:
+    int threshold;
+public:
+    ThresholdReplenishStrategy(int threshold) {
+        this->threshold = threshold;
+    }
+    void replenish(InventoryManager* manager, map<int,int> itemsToReplenish) override {
+        cout << "[ThresholdReplenish] Checking threshold... \n";
+        for (auto it : itemsToReplenish) {
+            int sku = it.first;
+            int qtyToAdd = it.second;
+            int current  = manager->checkStock(sku);
+            if (current < threshold) {
+                manager->addStock(sku, qtyToAdd);
+                cout << "  -> SKU " << sku << " was " << current 
+                     << ", replenished by " << qtyToAdd << endl;
+            }
+        }
+    }
+};
