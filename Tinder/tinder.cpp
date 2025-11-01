@@ -148,3 +148,76 @@ public:
         return category;
     }
 };
+
+class Preference {
+private:
+    std::vector<Gender> interestedIn;
+    int minAge;
+    int maxAge;
+    double maxDistance; // in kilometers
+    std::vector<std::string> interests;
+    
+public:
+    Preference() {
+        minAge = 18;
+        maxAge = 100;
+        maxDistance = 100.0;
+    }
+    
+    void addGenderPreference(Gender gender) {
+        interestedIn.push_back(gender);
+    }
+    
+    void removeGenderPreference(Gender gender) {
+        interestedIn.erase(std::remove(interestedIn.begin(), interestedIn.end(), gender), interestedIn.end());
+    }
+    
+    void setAgeRange(int min, int max) {
+        minAge = min;
+        maxAge = max;
+    }
+    
+    void setMaxDistance(double distance) {
+        maxDistance = distance;
+    }
+    
+    void addInterest(const std::string& interest) {
+        interests.push_back(interest);
+    }
+    
+    void removeInterest(const std::string& interest) {
+        interests.erase(std::remove(interests.begin(), interests.end(), interest), interests.end());
+    }
+    
+    bool isInterestedInGender(Gender gender) const {
+        return std::find(interestedIn.begin(), interestedIn.end(), gender) != interestedIn.end();
+    }
+    
+    bool isAgeInRange(int age) const {
+        return age >= minAge && age <= maxAge;
+    }
+    
+    bool isDistanceAcceptable(double distance) const {
+        return distance <= maxDistance;
+    }
+    
+    const std::vector<std::string>& getInterests() const {
+        return interests;
+    }
+    
+    const std::vector<Gender>& getInterestedGenders() const {
+        return interestedIn;
+    }
+    
+    int getMinAge() const {
+        return minAge;
+    }
+    
+    int getMaxAge() const {
+        return maxAge;
+    }
+    
+    double getMaxDistance() const {
+        return maxDistance;
+    }
+};
