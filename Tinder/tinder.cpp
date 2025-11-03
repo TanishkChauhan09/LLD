@@ -221,3 +221,89 @@ public:
         return maxDistance;
     }
 };
+
+class Message {
+private:
+    string senderId;
+    string content;
+    time_t timestamp;
+    
+public:
+    Message(const string& sender, const string& msg) {
+        senderId = sender;
+        content = msg;
+        timestamp = time(nullptr);
+    }
+    
+    string getSenderId() const {
+        return senderId;
+    }
+    
+    string getContent() const {
+        return content;
+    }
+    
+    time_t getTimestamp() const {
+        return timestamp;
+    }
+    
+    string getFormattedTime() const {
+        struct tm* timeinfo;
+        char buffer[80];
+        
+        timeinfo = localtime(&timestamp);
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+        return string(buffer);
+    }
+};
+
+// Chat room class
+class ChatRoom {
+private:
+    string id;
+    vector<string> participantIds;
+    vector<Message*> messages;
+    
+public:
+    ChatRoom(const string& roomId, const string& user1Id, const string& user2Id) {
+        id = roomId;
+        participantIds.push_back(user1Id);
+        participantIds.push_back(user2Id);
+    }
+    
+    ~ChatRoom() {
+        for (auto msg : messages) {
+            delete msg;
+        }
+    }
+    
+    string getId() const {
+        return id;
+    }
+    
+    void addMessage(const string& senderId, const string& content) {
+        Message* msg = new Message(senderId, content);
+        messages.push_back(msg);
+    }
+    
+    bool hasParticipant(const string& userId) const {
+        return find(participantIds.begin(), participantIds.end(), userId) != participantIds.end();
+    }
+    
+    const vector<Message*>& getMessages() const {
+        return messages;
+    }
+    
+    const vector<string>& getParticipants() const {
+        return participantIds;
+    }
+    
+    void displayChat() const {
+        cout << "===== Chat Room: " << id << " =====" << endl;
+        for (const auto& msg : messages) {
+            cout << "[" << msg->getFormattedTime() << "] " 
+                 << msg->getSenderId() << ": " << msg->getContent() << endl;
+        }
+        cout << "=========================" << endl;
+    }
+};
