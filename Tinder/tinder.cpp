@@ -307,3 +307,137 @@ public:
         cout << "=========================" << endl;
     }
 };
+
+
+class UserProfile {
+private:
+    string name;
+    int age;
+    Gender gender;
+    string bio;
+    vector<string> photos;
+    vector<Interest*> interests;
+    Location location;
+    
+public:
+    UserProfile() {
+        name = "";
+        age = 0;
+        gender = Gender::OTHER;
+    }
+    
+    ~UserProfile() {
+        for (auto interest : interests) {
+            delete interest;
+        }
+    }
+    
+    void setName(const string& n) {
+        name = n;
+    }
+    
+    void setAge(int a) {
+        age = a;
+    }
+    
+    void setGender(Gender g) {
+        gender = g;
+    }
+    
+    void setBio(const string& b) {
+        bio = b;
+    }
+    
+    void addPhoto(const string& photoUrl) {
+        photos.push_back(photoUrl);
+    }
+    
+    void removePhoto(const string& photoUrl) {
+        photos.erase(remove(photos.begin(), photos.end(), photoUrl), photos.end());
+    }
+    
+    void addInterest(const string& name, const string& category) {
+        Interest* interest = new Interest(name, category);
+        interests.push_back(interest);
+    }
+    
+    void removeInterest(const string& name) {
+        auto it = find_if(interests.begin(), interests.end(), 
+            [&name](const Interest* interest) {
+                return interest->getName() == name;
+            });
+        
+        if (it != interests.end()) {
+            delete *it;
+            interests.erase(it);
+        }
+    }
+    
+    void setLocation(const Location& loc) {
+        location = loc;
+    }
+    
+    string getName() const {
+        return name;
+    }
+    
+    int getAge() const {
+        return age;
+    }
+    
+    Gender getGender() const {
+        return gender;
+    }
+    
+    string getBio() const {
+        return bio;
+    }
+    
+    const vector<string>& getPhotos() const {
+        return photos;
+    }
+    
+    const vector<Interest*>& getInterests() const {
+        return interests;
+    }
+    
+    const Location& getLocation() const {
+        return location;
+    }
+    
+    void display() const {
+        cout << "===== Profile =====" << endl;
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+        cout << "Gender: ";
+        switch (gender) {
+            case Gender::MALE: cout << "Male"; break;
+            case Gender::FEMALE: cout << "Female"; break;
+            case Gender::NON_BINARY: cout << "Non-binary"; break;
+            case Gender::OTHER: cout << "Other"; break;
+        }
+        cout << endl;
+        
+        cout << "Bio: " << bio << endl;
+        
+        cout << "Photos: ";
+        for (const auto& photo : photos) {
+            cout << photo << ", ";
+        }
+        cout << endl;
+        
+        cout << "Interests: ";
+        for (const auto& interest : interests) {
+            cout << interest->getName() << " (" << interest->getCategory() << "), ";
+        }
+        cout << endl;
+        
+        cout << "Location: " << location.getLatitude() << ", " << location.getLongitude() << endl;
+        cout << "===================" << endl;
+    }
+};
+
+enum class SwipeAction {
+    LEFT,  
+    RIGHT  
+};
