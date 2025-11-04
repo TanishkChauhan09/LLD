@@ -441,3 +441,70 @@ enum class SwipeAction {
     LEFT,  
     RIGHT  
 };
+
+
+class User {
+private:
+    string id;
+    UserProfile* profile;
+    Preference* preference;
+    map<string, SwipeAction> swipeHistory; // userId -> action
+    NotificationObserver* notificationObserver;
+    
+public:
+    User(const string& userId) {
+        id = userId;
+        profile = new UserProfile();
+        preference = new Preference();
+        notificationObserver = new UserNotificationObserver(userId);
+        NotificationService::getInstance()->registerObserver(userId, notificationObserver);
+    }
+    
+    ~User() {
+        delete profile;
+        delete preference;
+        NotificationService::getInstance()->removeObserver(id);
+        delete notificationObserver;
+    }
+    
+    string getId() const {
+        return id;
+    }
+    
+    UserProfile* getProfile() {
+        return profile;
+    }
+    
+    Preference* getPreference() {
+        return preference;
+    }
+    
+    void swipe(const string& otherUserId, SwipeAction action) {
+        swipeHistory[otherUserId] = action;
+    }
+    
+    bool hasLiked(const string& otherUserId) const {
+        auto it = swipeHistory.find(otherUserId);
+        if (it != swipeHistory.end()) {
+            return it->second == SwipeAction::RIGHT;
+        }
+        return false;
+    }
+    
+    bool hasDisliked(const string& otherUserId) const {
+        auto it = swipeHistory.find(otherUserId);
+        if (it != swipeHistory.end()) {
+            return it->second == SwipeAction::LEFT;
+        }
+        return false;
+    }
+    
+    bool hasInteractedWith(const string& otherUserId) const {
+        return swipeHistory.find(otherUserId) != swipeHistory.end();
+    }
+    
+    void displayProfile() const {  // Principle of least knowledge
+        profile->display();
+    }
+};
+
