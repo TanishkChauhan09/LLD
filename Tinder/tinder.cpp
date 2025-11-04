@@ -508,3 +508,8 @@ public:
     }
 };
 
+class LocationStrategy {
+public:
+    virtual ~LocationStrategy() {}
+    virtual std::vector<User*> findNearbyUsers(const Location& location, double maxDistance, const std::vector<User*>& allUsers) = 0;
+};
