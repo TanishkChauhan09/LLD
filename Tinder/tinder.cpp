@@ -513,3 +513,18 @@ public:
     virtual ~LocationStrategy() {}
     virtual std::vector<User*> findNearbyUsers(const Location& location, double maxDistance, const std::vector<User*>& allUsers) = 0;
 };
+
+
+class BasicLocationStrategy : public LocationStrategy {
+public:
+    vector<User*> findNearbyUsers(const Location& location, double maxDistance, const vector<User*>& allUsers) override {
+        vector<User*> nearbyUsers;
+        for (User* user : allUsers) {
+            double distance = location.distanceInKm(user->getProfile()->getLocation());
+            if (distance <= maxDistance) {
+                nearbyUsers.push_back(user);
+            }
+        }
+        return nearbyUsers;
+    }
+};
