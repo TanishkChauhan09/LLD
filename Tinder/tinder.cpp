@@ -528,3 +528,37 @@ public:
         return nearbyUsers;
     }
 };
+
+
+class LocationService {
+private:
+    LocationStrategy* strategy;
+    
+    // Singleton Pattern
+    static LocationService* instance;
+    
+    LocationService() {
+        strategy = new BasicLocationStrategy();
+    }
+    
+public:
+    static LocationService* getInstance() {
+        if (instance == nullptr) {
+            instance = new LocationService();
+        }
+        return instance;
+    }
+    
+    ~LocationService() {
+        delete strategy;
+    }
+    
+    void setStrategy(LocationStrategy* newStrategy) {
+        delete strategy;
+        strategy = newStrategy;
+    }
+    
+    vector<User*> findNearbyUsers(const Location& location, double maxDistance, const vector<User*>& allUsers) {
+        return strategy->findNearbyUsers(location, maxDistance, allUsers);
+    }
+};
