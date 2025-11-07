@@ -611,3 +611,37 @@ public:
         return 0.5; // 50% match
     }
 };
+
+
+class InterestsBasedMatcher : public Matcher {
+public:
+    double calculateMatchScore(User* user1, User* user2) override {
+        // First, check basic compatibility
+        BasicMatcher basicMatcher;
+        double baseScore = basicMatcher.calculateMatchScore(user1, user2);
+        
+        if (baseScore == 0.0) {
+            return 0.0; // No need to continue if basic criteria don't match
+        }
+        
+        // Calculate score based on shared interests
+        std::vector<std::string> user1InterestNames;
+        for (const auto& interest : user1->getProfile()->getInterests()) {
+            user1InterestNames.push_back(interest->getName());
+        }
+        
+        int sharedInterests = 0;
+        for (const auto& interest : user2->getProfile()->getInterests()) {
+            if (std::find(user1InterestNames.begin(), user1InterestNames.end(), interest->getName()) != user1InterestNames.end()) {
+                sharedInterests++;
+            }
+        }
+        
+        // Bonus score based on shared interests (up to 0.5 additional points)
+        double maxInterests = std::max(user1->getProfile()->getInterests().size(), user2->getProfile()->getInterests().size());
+        double interestScore = maxInterests > 0 ? 0.5 * (sharedInterests / maxInterests) : 0.0;
+        
+        return baseScore + interestScore;
+    }
+};
+    
