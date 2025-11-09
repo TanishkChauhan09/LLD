@@ -668,4 +668,21 @@ public:
     }
 };
 
+
+class MatcherFactory {
+public:
+    static Matcher* createMatcher(MatcherType type) {
+        switch (type) {
+            case MatcherType::BASIC:
+                return new BasicMatcher();
+            case MatcherType::INTERESTS_BASED:
+                return new InterestsBasedMatcher();
+            case MatcherType::LOCATION_BASED:
+                return new LocationBasedMatcher();
+            default:
+                return new BasicMatcher();
+        }
+    }
+};
+
     
