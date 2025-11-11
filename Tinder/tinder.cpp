@@ -741,6 +741,106 @@ public:
         return nullptr;
     }
     
-
+    std::vector<User*> findNearbyUsers(const std::string& userId, double maxDistance = 5.0) {
+        User* user = getUserById(userId);
+        if (user == nullptr) {
+            return vector<User*>();
+        }
+        
+        // Find users within maxDistance km
+        vector<User*> nearbyUsers = LocationService::getInstance()->findNearbyUsers(
+            user->getProfile()->getLocation(), maxDistance, users);
+        
+        // Filter out the user themselves
+        nearbyUsers.erase(remove(nearbyUsers.begin(), nearbyUsers.end(), user), nearbyUsers.end());
+        
+        // Filter out users that don't match preferences or have already been swiped
+        vector<User*> filteredUsers;
+        for (User* otherUser : nearbyUsers) {
+            // Skip users that have already been interacted with
+            if (user->hasInteractedWith(otherUser->getId())) {
+                continue;
+            }
+            
+            // Calculate match score
+            double score = matcher->calculateMatchScore(user, otherUser);
+            
+            // If score is above 0, they meet basic preference criteria
+            if (score > 0) {
+                filteredUsers.push_back(otherUser);
+            }
+        }
+        
+        return filteredUsers;
+    }
+    
+    bool swipe(const string& userId, const string& targetUserId, SwipeAction action) {
+        User* user = getUserById(userId);
+        User* targetUser = getUserById(targetUserId);
+        
+        if (user == nullptr || targetUser == nullptr) {
+            cout << "User not found." << endl;
+            return false;
+        }
+        
+        user->swipe(targetUserId, action);
+        
+        // Check if it's a match
+        if (action == SwipeAction::RIGHT && targetUser->hasLiked(userId)) {
+            // It's a match!
+            string chatRoomId = userId + "_" + targetUserId;
+            ChatRoom* chatRoom = new ChatRoom(chatRoomId, userId, targetUserId);
+            chatRooms.push_back(chatRoom);
+            
+            // Notify both users
+            NotificationService::getInstance()->notifyUser(userId, "You have a new match with " + targetUser->getProfile()->getName() + "!");
+            NotificationService::getInstance()->notifyUser(targetUserId, "You have a new match with " + user->getProfile()->getName() + "!");
+            return true;
+        }
+        return false;
+    }
+    
+    ChatRoom* getChatRoom(const string& user1Id, const string& user2Id) {
+        for (auto chatRoom : chatRooms) {
+            if (chatRoom->hasParticipant(user1Id) && chatRoom->hasParticipant(user2Id)) {
+                return chatRoom;
+            }
+        }
+        return nullptr;
+    }
+    
+    void sendMessage(const string& senderId, const string& receiverId, const string& content) {
+        ChatRoom* chatRoom = getChatRoom(senderId, receiverId);
+        if (chatRoom == nullptr) {
+            cout << "No chat room found between these users." << endl;
+            return;
+        }
+        
+        chatRoom->addMessage(senderId, content);
+        
+        // Notify the receiver
+        NotificationService::getInstance()->notifyUser(receiverId, "New message from " + getUserById(senderId)->getProfile()->getName());
+    }
+    
+    void displayUser(const string& userId) {
+        User* user = getUserById(userId);
+        if (user == nullptr) {
+            cout << "User not found." << endl;
+            return;
+        }
+        
+        user->displayProfile();
+    }
+    
+    void displayChatRoom(const string& user1Id, const string& user2Id) {
+        ChatRoom* chatRoom = getChatRoom(user1Id, user2Id);
+        if (chatRoom == nullptr) {
+            cout << "No chat room found between these users." << endl;
+            return;
+        }
+        
+        chatRoom->displayChat();
+    }
+};
 
     
