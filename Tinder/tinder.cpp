@@ -685,4 +685,62 @@ public:
     }
 };
 
+
+
+class DatingApp {
+private:
+    vector<User*> users;
+    vector<ChatRoom*> chatRooms;
+    Matcher* matcher;
+    
+    // Singleton Pattern
+    static DatingApp* instance;
+    
+    DatingApp() {
+        // Default to location-based matcher
+        matcher = MatcherFactory::createMatcher(MatcherType::LOCATION_BASED);
+    }
+    
+public:
+    static DatingApp* getInstance() {
+        if (instance == nullptr) {
+            instance = new DatingApp();
+        }
+        return instance;
+    }
+    
+    ~DatingApp() {
+        for (auto user : users) {
+            delete user;
+        }
+        
+        for (auto chatRoom : chatRooms) {
+            delete chatRoom;
+        }
+        
+        delete matcher;
+    }
+    
+    void setMatcher(MatcherType type) {
+        delete matcher;
+        matcher = MatcherFactory::createMatcher(type);
+    }
+    
+    User* createUser(const string& userId) {
+        User* user = new User(userId);
+        users.push_back(user);
+        return user;
+    }
+    
+    User* getUserById(const string& userId) {
+        for (auto user : users) {
+            if (user->getId() == userId) {
+                return user;
+            }
+        }
+        return nullptr;
+    }
+    
+
+
     
